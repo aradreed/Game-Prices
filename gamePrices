@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+
+# Video Game Prices
+# Arad Reed
+# Add options for platform and other search criteria
+
+require 'optparse'
+require 'mechanize'
+
+# Switches
+options = {}
+
+optparse = OptionParser.new do |opts|   
+  opts.banner = "Usage: ./gamePrices [options] video game" 
+  
+  opts.on( '-p', '--platform', 'Search on a specific platform' ) do |p|     
+    options[:platform] = p
+  end
+  
+  opts.on( '-h', '--help', 'Display this screen' ) do     
+    puts opts     
+    exit   
+  end
+end
+
+optparse.parse!
+
+# Game search
+game = ARGV.join("+")
+link = "http://videogames.pricecharting.com/search?q=#{game}&type=videogames&go=Go"
+
+mech = Mechanize.new
+
+page = mech.get(link)
+
+if options[:platform]
+    page.field_with(:name => 'console-filter').options.each {|o| o.click if o == options[:platform]}
+end 
+
+#puts page.uri
+system("open http://videogames.pricecharting.com/search?q=#{game}&type=videogames&go=Go")
