@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 
-# Video Game Prices v 0.6
+# Video Game Prices v 0.7
 # Arad Reed
-# Add options for platform and other search criteria
-# Number search results and add ability to go to the specific one
-# Add option to open page in browser
+# Add console to display (necessary to differentiate games)
+# Number search results and add option to open page in browser (selecting number)
 
 require 'optparse'
 require 'mechanize'
@@ -30,9 +29,17 @@ options = {}
 optparse = OptionParser.new do |opts|   
   opts.banner = "Usage: ./gamePrices [options] video game" 
   
-  opts.on( '-p', '--platform', 'Search on a specific platform' ) do |p|     
-    options[:platform] = p
-    puts "This option has not been implemented yet.."
+  opts.on( '-p', '--platform  "PLATFORM"', 'Search on a specific platform (quotes if platform contains spaces)' ) do |p| 
+    consoles = ["amiibo", "atari 2600", "atari 400", "atari 5200", "atari 7800", "cd-i", "gameboy", "gameboy advance", "gameboy color", "gamecube", "macintosh", "nes", "nintendo 3ds", "nintendo 64", "nintendo ds", "pc games", "sega genesis", "super nintendo", "virtual boy", "wii", "wii u"]   
+    p.downcase!
+    
+    if (consoles.include? p) 
+      options[:platform] = p
+    else
+      puts "Platform argument is invalid"
+    end
+      
+    ARGV.delete(p)
   end
   
   opts.on( '-h', '--help', 'Display this screen' ) do     
@@ -64,10 +71,14 @@ if (page.uri.to_s == link)
   games.each do |game| 
     # Gives Title, Console, Genre, Loose Price, New Price
     game_data = game.strip.split(/\s{2,}/)
-    printGame(game_data[0].strip, game_data[3].strip, game_data[4].strip)
+    
+    if (options[:platform] == game_data[1].downcase)
+      printGame(game_data[0].strip, game_data[3].strip, game_data[4].strip)
+    end
   end
   
 else
+  # Specific game page
   title = page.at('//h1[@id="product_name"]').text.split(/prices/i)[0].strip
   loose_price = page.at('//td[@id="used_price"]').text.strip
   new_price = page.at('//td[@id="new_price"]').text.strip
