@@ -43,7 +43,10 @@ if (page.uri.to_s == link)
   
   # Get rid of any blank data
   games.delete_if { |data| !data.match(/\w/) }
-  puts games[0]
+  puts games
 else
-  
+  title = page.at('//h1[@id="product_name"]').text.split(/prices/i)[0].strip
+  loose_price = page.at('//td[@id="used_price"]').text.strip
+  complete_price = page.at('//td[@id="complete_price"]').text.strip
+  new_price = page.at('//td[@id="new_price"]').text.strip
 end
