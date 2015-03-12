@@ -1,11 +1,16 @@
 #!/usr/bin/env ruby
 
-# Video Game Prices
+# Video Game Prices v 0.5.1
 # Arad Reed
 # Add options for platform and other search criteria
 
 require 'optparse'
 require 'mechanize'
+
+def printGame(title, loose_price, new_price, complete_price = 0)
+  # Display the game info in a moderately pretty format
+  printf("%-30s%-10s%-10s%-10s\n", title, loose_price, complete_price, new_price)
+end
 
 # Switches
 options = {}
@@ -47,6 +52,7 @@ if (page.uri.to_s == link)
 else
   title = page.at('//h1[@id="product_name"]').text.split(/prices/i)[0].strip
   loose_price = page.at('//td[@id="used_price"]').text.strip
-  complete_price = page.at('//td[@id="complete_price"]').text.strip
   new_price = page.at('//td[@id="new_price"]').text.strip
+  complete_price = page.at('//td[@id="complete_price"]').text.strip
+  printGame(title, loose_price, new_price, complete_price)
 end
