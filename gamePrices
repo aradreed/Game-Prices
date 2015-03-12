@@ -15,6 +15,7 @@ optparse = OptionParser.new do |opts|
   
   opts.on( '-p', '--platform', 'Search on a specific platform' ) do |p|     
     options[:platform] = p
+    puts "This option has not been implemented yet.."
   end
   
   opts.on( '-h', '--help', 'Display this screen' ) do     
@@ -33,9 +34,16 @@ mech = Mechanize.new
 
 page = mech.get(link)
 
-if options[:platform]
-    page.field_with(:name => 'console-filter').options.each {|o| o.click if o == options[:platform]}
-end 
-
-#puts page.uri
-system("open http://videogames.pricecharting.com/search?q=#{game}&type=videogames&go=Go")
+# If the link is still the same, we're on the search page. Otherwise, we're on the game's page
+if (page.uri.to_s == link) 
+  # Display all search results
+  # Game array, containing all the data that needs parsed for each game
+  # Split by artbitrary number of whitespace (games are separated by more whitespace than game data)
+  games = page.search('//table[@id="games_table"]/tbody/tr').text.split(/\s{30,}/)
+  
+  # Get rid of any blank data
+  games.delete_if { |data| !data.match(/\w/) }
+  puts games[0]
+else
+  
+end
