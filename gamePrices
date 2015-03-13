@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Video Game Prices v 0.7
+# Video Game Prices v 0.71
 # Arad Reed
 # Add console to display (necessary to differentiate games)
 # Number search results and add option to open page in browser (selecting number)
@@ -9,18 +9,18 @@ require 'optparse'
 require 'mechanize'
 
 def header
-    printf("%-50s%-10s%-10s%-10s\n", "Title", "Loose", "Complete", "New")
-    80.times {print "-"}
+    printf("%-4s%-50s%-10s%-10s%-10s\n", "#", "Title", "Loose", "Complete", "New")
+    84.times {print "-"}
     puts
 end
 
-def printGame(title, loose_price, new_price, complete_price = 0)
+def printGame(title, loose_price, new_price, complete_price, number = 0)
   # Display the game info in a moderately pretty format
   if (title.length > 40)
     title = "#{title[0, 40]} (...)" 
   end
   
-  printf("%-50s%-10s%-10s%-10s\n", title, loose_price, complete_price, new_price)
+  printf("%-4s%-50s%-10s%-10s%-10s\n", number, title, loose_price, complete_price, new_price)
 end
 
 # Switches
@@ -68,12 +68,17 @@ if (page.uri.to_s == link)
   # Begin display
   header
   
-  games.each do |game| 
+  games.each_with_index do |game, i| 
     # Gives Title, Console, Genre, Loose Price, New Price
     game_data = game.strip.split(/\s{2,}/)
     
-    if (options[:platform] == game_data[1].downcase)
-      printGame(game_data[0].strip, game_data[3].strip, game_data[4].strip)
+    # Check for a specific platform search
+    if (options[:platform])
+      if (options[:platform] == game_data[1].downcase)
+        printGame(game_data[0].strip, game_data[3].strip, game_data[4].strip, "none", i)
+      end
+    else 
+      printGame(game_data[0].strip, game_data[3].strip, game_data[4].strip, "none", i)
     end
   end
   
