@@ -1,9 +1,8 @@
 #!/usr/bin/env ruby
 
-# Video Game Prices v 0.71
+# Video Game Prices v 0.75
 # Arad Reed
 # Add console to display (necessary to differentiate games)
-# Number search results and add option to open page in browser (selecting number)
 
 require 'optparse'
 require 'mechanize'
@@ -91,4 +90,24 @@ else
   
   header
   printGame(title, loose_price, new_price, complete_price)
+end
+
+# Open page in browser or exit
+while (true)
+  puts "\nEnter open to open the game's page in your browser. Press enter to exit"
+
+  cmd = STDIN.gets.chomp
+
+  case cmd
+
+  when "open"
+    system("open #{page.uri}")
+  when "search"
+    print "Enter search term: "
+    search = STDIN.gets.chomp
+    system("#{$0} #{search}")
+    break
+  else
+    exit
+  end
 end

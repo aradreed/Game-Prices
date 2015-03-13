@@ -1,6 +1,8 @@
-# Game-Prices v0.7
+# Game-Prices v0.75
 ## Description
 Grabs the recent price from http://pricecharting.com for video games. Pass it a game name, and it will display the loose price, complete price (only for results with one match), and new price for the game. If the search has only one match, it will list that one. Otherwise, all the search results will be listed. Search for a game on a specific platform by using the -p switch. More info on usage can be seen below.
+
+Once the search results are displayed, you can open the page on pricecharting using the open command. You can search something else by using the search command, which will then ask for the search term following the same parameters as before. Or you can just press enter to exit.
 
 ## Usage
 Normal usage
