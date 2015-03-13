@@ -8,17 +8,14 @@ require 'optparse'
 require 'mechanize'
 
 def header
-    printf("%-4s%-50s%-10s%-10s%-10s\n", "#", "Title", "Loose", "Complete", "New")
-    84.times {print "-"}
-    puts
+  printf("%-4s%-50s%-10s%-10s%-10s\n", "#", "Title", "Loose", "Complete", "New")
+  print "-" * 84
+  puts
 end
 
 def printGame(title, loose_price, new_price, complete_price, number = 0)
   # Display the game info in a moderately pretty format
-  if (title.length > 40)
-    title = "#{title[0, 40]} (...)" 
-  end
-  
+  title = "#{title[0, 40]} (...)" if (title.length > 40)
   printf("%-4s%-50s%-10s%-10s%-10s\n", number, title, loose_price, complete_price, new_price)
 end
 
@@ -28,17 +25,13 @@ options = {}
 optparse = OptionParser.new do |opts|   
   opts.banner = "Usage: ./gamePrices [options] video game" 
   
-  opts.on( '-p', '--platform  "PLATFORM"', 'Search on a specific platform (quotes if platform contains spaces)' ) do |p| 
+  opts.on( '-p', '--platform  "PLATFORM"', 'Search on a specific platform (quotes if platform contains spaces)' ) do |platform| 
     consoles = ["amiibo", "atari 2600", "atari 400", "atari 5200", "atari 7800", "cd-i", "gameboy", "gameboy advance", "gameboy color", "gamecube", "macintosh", "nes", "nintendo 3ds", "nintendo 64", "nintendo ds", "pc games", "sega genesis", "super nintendo", "virtual boy", "wii", "wii u"]   
-    p.downcase!
+    platform.downcase!
     
-    if (consoles.include? p) 
-      options[:platform] = p
-    else
-      puts "Platform argument is invalid"
-    end
+    options[:platform] = platform if consoles.include?(platform) or abort "Platform argument is invalid"
       
-    ARGV.delete(p)
+    ARGV.delete(platform)
   end
   
   opts.on( '-h', '--help', 'Display this screen' ) do     
@@ -53,9 +46,7 @@ optparse.parse!
 game = ARGV.join("+")
 link = "http://videogames.pricecharting.com/search?q=#{game}&type=videogames&go=Go"
 
-mech = Mechanize.new
-
-page = mech.get(link)
+page = Mechanize.new.get(link)
 
 # If the link is still the same, we're on the search page. Otherwise, we're on the game's page
 if (page.uri.to_s == link) 
@@ -93,12 +84,10 @@ else
 end
 
 # Open page in browser or exit
-while (true)
+while true
   puts "\nEnter open to open the game's page in your browser. Press enter to exit"
 
-  cmd = STDIN.gets.chomp
-
-  case cmd
+  case STDIN.gets.chomp
 
   when "open"
     system("open #{page.uri}")
